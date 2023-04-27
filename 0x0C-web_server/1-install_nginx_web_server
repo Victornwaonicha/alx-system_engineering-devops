@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+#script that configures a new Ubuntu machine to listen on port 80
+#it must return a page that contains the string Hello World!
+# Install Nginix
+sudo apt-get -y update
+sudo apt-get install -y nginx
+
+# Configure Nginx
+mkdir /etc/nginx/html
+
+# Create Sample page
+echo "Hello World!" > /etc/nginx/html/index.html
+
+#Create server block files
+echo "server {
+        listen 80;
+        listen [::]:80;
+        root /etc/nginx/html;
+        index index.html index.htm index.nginx-debian.html;
+        server_name _;
+}
+" > /etc/nginx/sites-available/default
+
+#Restart Nginx
+nginx -s reload
