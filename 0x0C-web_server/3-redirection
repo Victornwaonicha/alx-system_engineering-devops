@@ -1,30 +1,12 @@
 #!/usr/bin/env bash
-# Update package list
-sudo apt-get update
+# Script that configures a new Ubuntu machine to respect above requirements
 
-# Install Nginx web server
+sudo apt-get update
 sudo apt-get install -y nginx
 
-# Configure Nginx to redirect /redirect_me to another page
-sudo bash -c "cat >/etc/nginx/sites-available/default <<EOL
-server {
-    listen 80 default_server;
-    listen [::]:80 default_server;
+echo "Hello World!" | sudo tee /var/www/html/index.html
+string_for_replacement="server_name _;\n\trewrite ^\/redirect_me https://www.youtube.com/watch?v=QH2-TGUlwu4 permanent;"
+sudo sed -i "s/server_name _;/$string_for_replacement/" /etc/nginx/sites-enabled/default
 
-    root /var/www/html;
-    index index.html index.htm;
-
-    server_name _;
-
-    location /redirect_me {
-        return 301 https://www.example.com/;
-    }
-
-    location / {
-        try_files \$uri \$uri/ =404;
-    }
-}
-EOL"
-
-# Test the Nginx configuration and reload Nginx
-sudo nginx -t && sudo service nginx reload
+# Restart nginx
+sudo service nginx restart
